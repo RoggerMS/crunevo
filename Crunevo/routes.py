@@ -313,17 +313,27 @@ def forum():
     filter_type = request.args.get('filter', 'all')
     
     query = Post.query
-    
+
     if filter_type == 'questions':
         query = query.filter_by(post_type='question')
     elif filter_type == 'discussions':
         query = query.filter_by(post_type='discussion')
-    
+
     posts = query.order_by(desc(Post.created_at)).paginate(
         page=page, per_page=15, error_out=False
     )
-    
-    return render_template('forum/index.html', posts=posts, filter_type=filter_type, format_time_ago=format_time_ago)
+
+    form = PostForm()  # ⬅ Este es el fix
+
+   return render_template(
+    'forum/index.html',
+    posts=posts,
+    filter_type=filter_type,
+    format_time_ago=format_time_ago,
+    post_form=form  # ⬅ clave: nombre debe coincidir con el usado en HTML
+)
+
+
 
 @app.route('/missions')
 @login_required
