@@ -1,0 +1,238 @@
+🌐 CRUNEVO - Plataforma Educativa Completa
+🔑 Autenticación y Seguridad
+Registro con correo electrónico (opción de validación para correos .edu.pe, verificación visual tipo sello edu).
+
+Registro con código de estudiante (validación manual al inicio, automática futura).
+
+Login social con Google o Facebook.
+
+Recuperación de contraseña mediante correo.
+
+Doble factor (opcional) vía email o código generado automáticamente en la app.
+
+Validación de contraseñas seguras y robustas.
+
+👤 Perfil del Usuario
+Imagen y banner personalizables.
+
+Información básica editable (nombre, carrera, biografía corta).
+
+Actividad reciente: apuntes subidos, publicaciones, comentarios, respuestas en foro.
+
+Historial de logros obtenidos.
+
+Visualización de créditos (Crolars) acumulados.
+
+Visualización de ranking actual.
+
+Gestión de privacidad (perfil público/privado).
+
+🏪 Tienda Educativa
+Productos educativos (libros, cursos premium, herramientas digitales, material físico).
+
+Diseño visual tipo Mercado Libre o Amazon:
+
+Filtros por categoría, precio, créditos (Crolars).
+
+Galería completa de imágenes por producto.
+
+Modal dinámico para vista rápida del producto.
+
+Carrito funcional para múltiples compras simultáneas.
+
+Integración de pagos seguros con pasarelas como Yape, Plin, Tarjetas o PayPal.
+
+Uso de Crolars acumulados para obtener descuentos.
+
+Indicadores visuales claros (disponibilidad, ofertas, popularidad).
+
+🎁 Sistema Completo de Créditos y Recompensas (Crolars)
+Ganancia por:
+
+Iniciar sesión consecutivamente (bonus semanal).
+
+Subir apuntes útiles.
+
+Responder dudas en el foro.
+
+Recibir likes en publicaciones o apuntes.
+
+Participar en eventos especiales y desafíos.
+
+Uso para:
+
+Compras o descuentos en la tienda.
+
+Canjear por beneficios exclusivos.
+
+Enviar agradecimientos (tips) a otros usuarios.
+
+Posibilidad futura de convertir a dinero real con un mínimo predefinido (ej. 5000 Crolars mínimo).
+
+📚 Apuntes y Recursos (Notas de estudiantes)
+Subida clara, rápida y visual:
+
+Categorías (materia, curso, nivel académico).
+
+Subida de archivos PDF, imágenes, texto plano.
+
+Subir imágenes o videos directamente o enlace a YouTube (con miniatura automática visible).
+
+Previsualización clara antes de publicar.
+
+Visualización de apuntes embebidos con PDF.js (para PDF).
+
+Opción de valoración por parte de otros usuarios (likes y comentarios visibles).
+
+💬 Chat entre Usuarios
+Estilo Facebook Messenger:
+
+Contactos visibles, en línea o última conexión.
+
+Envío de mensajes instantáneos.
+
+Envío de archivos multimedia (fotos, documentos, videos).
+
+Sistema de bloqueo y reporte para seguridad.
+
+Activación opcional (el usuario acepta explícitamente términos antes de activar).
+
+🤖 Asistente con Inteligencia Artificial (Crunebot)
+Sistema ChatGPT-like para resolver dudas académicas y generar resúmenes rápidos.
+
+Disponible en sección especial, barra lateral o modal rápido.
+
+Posibilidad de respuestas rápidas tipo FAQ automatizadas.
+
+📢 Feed Principal (Home)
+Publicaciones mixtas:
+
+Apuntes destacados (más vistos, más descargados).
+
+Publicaciones populares (más comentadas).
+
+Últimas actualizaciones o anuncios oficiales.
+
+Creación de publicaciones tipo Facebook:
+
+Subir imágenes o videos, textos y enlaces con miniaturas automáticas (YouTube, sitios web).
+
+Selección clara entre "subir apunte" o "crear publicación".
+
+Interacciones visibles (likes, comentarios).
+
+Paginación infinita con AJAX para mejor fluidez y menor consumo de recursos.
+
+🏆 Ranking y Logros
+Sistema visual tipo gamificación:
+
+Insignias atractivas, claramente diseñadas, acumulables.
+
+Nivel visible según puntos acumulados (participación, contribuciones, popularidad).
+
+Ranking público y visual en una pestaña dedicada.
+
+Beneficios exclusivos para usuarios más activos.
+
+🌐 Foro de Preguntas y Respuestas
+Inspirado en Quora y Brainly:
+
+Preguntas específicas y bien categorizadas (materias, dificultad).
+
+Respuestas claramente visibles, votables y comentables.
+
+Sistema de reputación visible por usuario (experto en áreas específicas).
+
+Moderación clara para asegurar calidad educativa.
+
+🔍 Buscador Avanzado Universal
+Tipo Facebook con sugerencias y resultados instantáneos.
+
+Resultados múltiples:
+
+Usuarios (nombre, carrera, institución).
+
+Apuntes (título, materia, autor).
+
+Publicaciones (texto, imágenes, videos).
+
+Productos de la tienda (categoría, nombre).
+
+Clubes (nombre del club, categoría).
+
+Cursos internos (por categoría o título).
+
+Eventos (título, descripción corta).
+
+Preguntas y respuestas del foro.
+
+Comentarios y respuestas específicas.
+
+Logros, insignias y recompensas.
+
+Administradores visibles con rol específico.
+
+Publicaciones populares recientes.
+
+Videos educativos subidos por usuarios.
+
+Grupos o clubes educativos sugeridos por interés.
+
+📅 Calendario y Eventos
+Organización de eventos educativos y sociales.
+
+Suscripción y notificación de eventos importantes.
+
+Visualización clara mensual, semanal, diaria.
+
+🎨 Personalización Completa
+Soporte modo oscuro/claro.
+
+Edición visual completa (fuente, tamaño, disposición básica).
+
+⚙️ Panel de Administración
+Completo y visualmente agradable (dashboard tipo Tabler Dashboard).
+
+Gestión total usuarios, productos, créditos, reportes.
+
+Estadísticas gráficas detalladas (uso, registros, actividad diaria).
+
+Reportes descargables y exportables a formatos comunes.
+
+🍪 Política de Cookies y Privacidad
+Aviso inicial con aceptación clara.
+
+Gestión de privacidad detallada desde perfil del usuario.
+
+🚀 Infraestructura Técnica
+Alta escalabilidad (tipo Fly.io o AWS).
+
+Base de datos PostgreSQL robusta, eficiente, segura.
+
+Almacenamiento de archivos mediante Cloudinary.
+
+Despliegues rápidos y sin interrupciones.
+
+📱 Interfaz móvil
+Totalmente adaptativa, tipo Scribd o Facebook.
+
+Experiencia fluida y rápida carga.
+
+Menú hamburguesa lateral claro y fácil de cerrar/abrir.
+
+✨ Extras y detalles visuales
+Barra superior semi-transparente con identidad visual distintiva.
+
+Indicadores claros de carga al subir archivos o imágenes.
+
+Toasts visuales para notificaciones rápidas (subida exitosa, errores).
+
+🎯 Bonus: Ideas para futuro cercano
+Clubes o grupos por carreras e intereses.
+
+Eventos en vivo con participación en tiempo real.
+
+Cursos gratuitos y pagos (plataforma de videos incrustados YouTube o subidos directamente).
+
+Sistema completo de referidos y afiliaciones (beneficios mutuos por invitar usuarios).
+

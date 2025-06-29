@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}{{ note.title }} - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-8">
+            <!-- Note Header -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <!-- Breadcrumb -->
+                <nav class="flex mb-4" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a href="{{ url_for('feed') }}" class="text-gray-500 hover:text-primary">Feed</a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <i data-feather="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                                <span class="ml-1 text-gray-500">{{ note.subject }}</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+                
+                <!-- Title and Meta -->
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">{{ note.title }}</h1>
+                        
+                        <!-- Author Info -->
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                                    {{ note.author.first_name[0] }}{{ note.author.last_name[0] }}
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('profile', username=note.author.username) }}" 
+                                       class="font-semibold text-gray-900 dark:text-white hover:text-primary">
+                                        {{ note.author.get_full_name() }}
+                                    </a>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">@{{ note.author.username }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tags and Meta -->
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
+                                {{ note.subject }}
+                            </span>
+                            {% if note.career %}
+                            <span class="bg-accent/10 text-accent px-3 py-1 rounded-full font-medium">
+                                {{ note.career.replace('-', ' ').title() }}
+                            </span>
+                            {% endif %}
+                            <div class="flex items-center space-x-1">
+                                <i data-feather="calendar" class="h-4 w-4"></i>
+                                <span>{{ format_time_ago(note.created_at) }}</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i data-feather="eye" class="h-4 w-4"></i>
+                                <span>{{ note.views }} vistas</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i data-feather="download" class="h-4 w-4"></i>
+                                <span>{{ note.downloads }} descargas</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex items-center space-x-3 ml-4">
+                        <a href="{{ url_for('toggle_like', content_type='note', content_id=note.id) }}" 
+                           class="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i data-feather="heart" class="h-5 w-5 text-red-500"></i>
+                            <span>{{ note.likes }}</span>
+                        </a>
+                        <button class="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i data-feather="share" class="h-5 w-5"></i>
+                            <span>Compartir</span>
+                        </button>
+                        {% if current_user != note.author %}
+                        <a href="{{ url_for('chat', username=note.author.username) }}" 
+                           class="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                            <i data-feather="message-circle" class="h-5 w-5"></i>
+                            <span>Contactar</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                {% if note.description %}
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Descripción</h3>
+                    <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ note.description }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- File Viewer -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+                <div class="p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                                {% if note.file_type == 'pdf' %}
+                                    <i data-feather="file-text" class="h-4 w-4 text-primary"></i>
+                                {% elif note.file_type == 'image' %}
+                                    <i data-feather="image" class="h-4 w-4 text-primary"></i>
+                                {% else %}
+                                    <i data-feather="file" class="h-4 w-4 text-primary"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900 dark:text-white">{{ note.title }}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ note.file_type.upper() }}</p>
+                            </div>
+                        </div>
+                        <a href="{{ note.file_url }}" target="_blank" 
+                           class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center space-x-2">
+                            <i data-feather="external-link" class="h-4 w-4"></i>
+                            <span>Ver en pantalla completa</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- File Content -->
+                <div class="p-6">
+                    {% if note.file_type == 'pdf' %}
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-8 text-center">
+                            <i data-feather="file-text" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Documento PDF</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6">
+                                Haz clic en "Ver en pantalla completa" para abrir el PDF
+                            </p>
+                            <a href="{{ note.file_url }}" target="_blank" 
+                               class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center space-x-2">
+                                <i data-feather="eye" class="h-5 w-5"></i>
+                                <span>Abrir PDF</span>
+                            </a>
+                        </div>
+                    {% elif note.file_type == 'image' %}
+                        <div class="text-center">
+                            <img src="{{ note.file_url }}" alt="{{ note.title }}" 
+                                 class="max-w-full h-auto rounded-lg shadow-lg mx-auto">
+                        </div>
+                    {% else %}
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-8 text-center">
+                            <i data-feather="download" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Archivo disponible</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6">
+                                Descarga el archivo para ver su contenido
+                            </p>
+                            <a href="{{ note.file_url }}" download 
+                               class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center space-x-2">
+                                <i data-feather="download" class="h-5 w-5"></i>
+                                <span>Descargar</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+                    Comentarios ({{ comments|length }})
+                </h3>
+                
+                <!-- Add Comment Form -->
+                <form method="POST" action="{{ url_for('add_comment', content_type='note', content_id=note.id) }}" class="mb-8">
+                    {{ comment_form.hidden_tag() }}
+                    <div class="flex space-x-4">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                            {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                        </div>
+                        <div class="flex-1">
+                            {{ comment_form.content(class="w-full border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white resize-none focus:ring-2 focus:ring-primary focus:border-primary", rows="3", placeholder="Escribe tu comentario...") }}
+                            <div class="flex justify-end mt-3">
+                                <button type="submit" 
+                                        class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                    Comentar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Comments List -->
+                {% if comments %}
+                    <div class="space-y-6">
+                        {% for comment in comments %}
+                        <div class="flex space-x-4">
+                            <div class="w-10 h-10 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-semibold">
+                                {{ comment.author.first_name[0] }}{{ comment.author.last_name[0] }}
+                            </div>
+                            <div class="flex-1">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <a href="{{ url_for('profile', username=comment.author.username) }}" 
+                                           class="font-semibold text-gray-900 dark:text-white hover:text-primary">
+                                            {{ comment.author.get_full_name() }}
+                                        </a>
+                                        <span class="text-sm text-gray-500">{{ format_time_ago(comment.created_at) }}</span>
+                                    </div>
+                                    <p class="text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
+                                </div>
+                                <div class="flex items-center space-x-4 mt-2">
+                                    <a href="{{ url_for('toggle_like', content_type='comment', content_id=comment.id) }}" 
+                                       class="flex items-center space-x-1 text-sm text-gray-500 hover:text-red-500 transition-colors">
+                                        <i data-feather="heart" class="h-4 w-4"></i>
+                                        <span>{{ comment.likes }}</span>
+                                    </a>
+                                    <button class="text-sm text-gray-500 hover:text-primary transition-colors">
+                                        Responder
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <i data-feather="message-circle" class="h-12 w-12 text-gray-400 mx-auto mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No hay comentarios</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Sé el primero en comentar este apunte</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="lg:col-span-4 mt-8 lg:mt-0">
+            <!-- Author Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Autor</h3>
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                        {{ note.author.first_name[0] }}{{ note.author.last_name[0] }}
+                    </div>
+                    <div class="flex-1">
+                        <a href="{{ url_for('profile', username=note.author.username) }}" 
+                           class="font-semibold text-gray-900 dark:text-white hover:text-primary">
+                            {{ note.author.get_full_name() }}
+                        </a>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">@{{ note.author.username }}</p>
+                        {% if note.author.university %}
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ note.author.university }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-primary">{{ note.author.notes|length }}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400">Apuntes</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-gray-900 dark:text-white">{{ note.author.total_points }}</div>
+                        <div class="text-xs text-gray-600 dark:text-gray-400">Puntos</div>
+                    </div>
+                </div>
+                
+                {% if current_user != note.author %}
+                <div class="mt-4 space-y-2">
+                    <a href="{{ url_for('chat', username=note.author.username) }}" 
+                       class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors text-center block">
+                        Enviar Mensaje
+                    </a>
+                    <a href="{{ url_for('profile', username=note.author.username) }}" 
+                       class="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center block">
+                        Ver Perfil
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Related Notes -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Apuntes Relacionados</h3>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer">
+                        <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Cálculo Integral - Parte 2</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Matemáticas • hace 2 días</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer">
+                        <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Límites y Continuidad</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Matemáticas • hace 1 semana</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer">
+                        <h4 class="font-medium text-gray-900 dark:text-white text-sm mb-1">Derivadas Básicas</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Matemáticas • hace 2 semanas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

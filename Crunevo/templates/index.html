@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary/10 to-accent/10">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="lg:flex lg:items-center lg:justify-between">
+                <div class="lg:w-1/2">
+                    <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                        Tu comunidad educativa
+                        <span class="text-primary">social</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                        Comparte apuntes, conecta con estudiantes, gana Crolars y construye tu identidad académica en la plataforma educativa más innovadora de Latinoamérica.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ url_for('register') }}" 
+                           class="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors text-center">
+                            Únete gratis
+                        </a>
+                        <a href="{{ url_for('login') }}" 
+                           class="border border-primary text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/10 transition-colors text-center">
+                            Iniciar sesión
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 mt-12 lg:mt-0">
+                    <div class="relative">
+                        <img src="https://pixabay.com/get/g09ea70d8f40745310edde74224bc842cf0347f800d0f08b81c79c5612e2573fd1799f009fda37a1852647ee07e0c4ac6fa46974718a54c680a7a8ffbfec1dfbc_1280.jpg" 
+                             alt="Estudiantes universitarios estudiando" 
+                             class="rounded-2xl shadow-2xl">
+                        <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg">
+                            <div class="flex items-center space-x-2">
+                                <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-6 w-6" alt="Crolars">
+                                <span class="font-semibold text-primary">+50 Crolars</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Por subir tu primer apunte</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Features Section -->
+    <div class="py-20 bg-white dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    ¿Por qué elegir CRUNEVO?
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300">
+                    Una plataforma diseñada especialmente para estudiantes universitarios latinoamericanos
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1: Social Feed -->
+                <div class="bg-neutral dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="share-2" class="h-8 w-8 text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                        Comparte Conocimiento
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Sube tus apuntes, comparte recursos y ayuda a otros estudiantes mientras ganas Crolars por tu contribución.
+                    </p>
+                </div>
+                
+                <!-- Feature 2: Gamification -->
+                <div class="bg-neutral dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="award" class="h-8 w-8 text-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                        Sistema de Recompensas
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Gana Crolars por tus actividades, completa misiones diarias y desbloquea logros únicos.
+                    </p>
+                </div>
+                
+                <!-- Feature 3: Community -->
+                <div class="bg-neutral dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="users" class="h-8 w-8 text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                        Comunidad Activa
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Conecta con estudiantes de tu carrera, participa en foros de discusión y construye tu red académica.
+                    </p>
+                </div>
+                
+                <!-- Feature 4: Marketplace -->
+                <div class="bg-neutral dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="shopping-bag" class="h-8 w-8 text-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                        Marketplace Estudiantil
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Intercambia materiales educativos usando Crolars y accede a recursos exclusivos de la comunidad.
+                    </p>
+                </div>
+                
+                <!-- Feature 5: AI Assistant -->
+                <div class="bg-neutral dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="cpu" class="h-8 w-8 text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                        Asistente IA
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Crunebot te ayuda con dudas académicas, organiza tus estudios y te guía en tu proceso de aprendizaje.
+                    </p>
+                </div>
+                
+                <!-- Feature 6: Mobile First -->
+                <div class="bg-neutral dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                        <i data-feather="smartphone" class="h-8 w-8 text-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                        Diseño Mobile-First
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Interfaz optimizada para móviles con navegación intuitiva y experiencia fluida en cualquier dispositivo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Section -->
+    <div class="py-20 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                    Únete a nuestra comunidad
+                </h2>
+                <p class="text-xl text-primary-100">
+                    Miles de estudiantes ya están compartiendo conocimiento
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <div class="text-4xl lg:text-5xl font-bold mb-2">1000+</div>
+                    <div class="text-lg text-primary-100">Estudiantes activos</div>
+                </div>
+                <div>
+                    <div class="text-4xl lg:text-5xl font-bold mb-2">5000+</div>
+                    <div class="text-lg text-primary-100">Apuntes compartidos</div>
+                </div>
+                <div>
+                    <div class="text-4xl lg:text-5xl font-bold mb-2">50+</div>
+                    <div class="text-lg text-primary-100">Universidades</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CTA Section -->
+    <div class="py-20 bg-white dark:bg-gray-900">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+                ¿Listo para potenciar tu educación?
+            </h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                Únete gratis a CRUNEVO y comienza a construir tu identidad académica hoy mismo.
+            </p>
+            <a href="{{ url_for('register') }}" 
+               class="bg-primary text-white px-12 py-4 rounded-lg text-xl font-semibold hover:bg-primary/90 transition-colors inline-block">
+                Crear cuenta gratis
+            </a>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
+                100% gratis • Sin tarjeta de crédito • Únete en menos de 2 minutos
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

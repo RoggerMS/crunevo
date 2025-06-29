@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRUNEVO - Plataforma Educativa Social{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7E57C2',
+                        secondary: '#FFFFFF',
+                        neutral: '#F5F5F5',
+                        accent: '#87CEEB',
+                        dark: '#1A1A1A'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <meta name="description" content="CRUNEVO - Plataforma educativa social para estudiantes universitarios. Comparte apuntes, gana Crolars y construye tu identidad académica.">
+</head>
+<body class="bg-neutral dark:bg-dark text-gray-800 dark:text-white transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-900 shadow-lg fixed top-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Logo -->
+                    <a href="{{ url_for('index' if not current_user.is_authenticated else 'feed') }}" class="flex items-center">
+                        <img src="{{ url_for('static', filename='icons/logo.svg') }}" class="h-8 w-8 mr-2" alt="CRUNEVO">
+                        <span class="text-xl font-bold text-primary">CRUNEVO</span>
+                    </a>
+                </div>
+                
+                {% if current_user.is_authenticated %}
+                <!-- Search -->
+                <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                    <form action="{{ url_for('search') }}" method="GET" class="w-full">
+                        <div class="relative">
+                            <input type="text" name="q" placeholder="Buscar apuntes, usuarios..." 
+                                   class="w-full px-4 py-2 pl-10 pr-4 text-gray-700 bg-gray-100 dark:bg-gray-800 dark:text-white border rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
+                            <i data-feather="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <a href="{{ url_for('notifications') }}" class="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <i data-feather="bell" class="h-5 w-5"></i>
+                        <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                    
+                    <!-- Crolars Balance -->
+                    <div class="flex items-center bg-primary/10 px-3 py-1 rounded-full">
+                        <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4 mr-1" alt="Crolars">
+                        <span class="text-sm font-semibold text-primary">{{ current_user.crolars }}</span>
+                    </div>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <i data-feather="sun" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="moon" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center space-x-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2">
+                            <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center">
+                                {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                            </div>
+                            <span class="hidden md:block text-sm font-medium">{{ current_user.first_name }}</span>
+                            <i data-feather="chevron-down" class="h-4 w-4"></i>
+                        </button>
+                        
+                        <div x-show="open" @click.away="open = false" 
+                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
+                            <a href="{{ url_for('profile', username=current_user.username) }}" 
+                               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i data-feather="user" class="inline h-4 w-4 mr-2"></i>Mi Perfil
+                            </a>
+                            <a href="{{ url_for('missions') }}" 
+                               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i data-feather="target" class="inline h-4 w-4 mr-2"></i>Misiones
+                            </a>
+                            <a href="{{ url_for('messages') }}" 
+                               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i data-feather="message-circle" class="inline h-4 w-4 mr-2"></i>Mensajes
+                            </a>
+                            <div class="border-t border-gray-100 dark:border-gray-700"></div>
+                            <a href="{{ url_for('logout') }}" 
+                               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <i data-feather="log-out" class="inline h-4 w-4 mr-2"></i>Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Login/Register -->
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <i data-feather="sun" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="moon" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    <a href="{{ url_for('login') }}" class="text-gray-700 dark:text-gray-300 hover:text-primary">Iniciar Sesión</a>
+                    <a href="{{ url_for('register') }}" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90">Registrarse</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Mobile Bottom Navigation -->
+    {% if current_user.is_authenticated %}
+    <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 md:hidden z-40">
+        <div class="flex justify-around py-2">
+            <a href="{{ url_for('feed') }}" class="flex flex-col items-center p-2 {{ 'text-primary' if request.endpoint == 'feed' else 'text-gray-500' }}">
+                <i data-feather="home" class="h-5 w-5"></i>
+                <span class="text-xs mt-1">Inicio</span>
+            </a>
+            <a href="{{ url_for('forum') }}" class="flex flex-col items-center p-2 {{ 'text-primary' if request.endpoint == 'forum' else 'text-gray-500' }}">
+                <i data-feather="message-square" class="h-5 w-5"></i>
+                <span class="text-xs mt-1">Foro</span>
+            </a>
+            <a href="{{ url_for('upload_note') }}" class="flex flex-col items-center p-2 text-primary">
+                <div class="bg-primary text-white rounded-full p-2">
+                    <i data-feather="plus" class="h-5 w-5"></i>
+                </div>
+                <span class="text-xs mt-1">Subir</span>
+            </a>
+            <a href="{{ url_for('marketplace') }}" class="flex flex-col items-center p-2 {{ 'text-primary' if request.endpoint == 'marketplace' else 'text-gray-500' }}">
+                <i data-feather="shopping-bag" class="h-5 w-5"></i>
+                <span class="text-xs mt-1">Tienda</span>
+            </a>
+            <a href="{{ url_for('profile', username=current_user.username) }}" class="flex flex-col items-center p-2 {{ 'text-primary' if request.endpoint == 'profile' else 'text-gray-500' }}">
+                <i data-feather="user" class="h-5 w-5"></i>
+                <span class="text-xs mt-1">Perfil</span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main class="pt-16 {% if current_user.is_authenticated %}pb-20 md:pb-0{% endif %}">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    {% for category, message in messages %}
+                        <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700 border border-red-300{% elif category == 'success' %}bg-green-100 text-green-700 border border-green-300{% else %}bg-blue-100 text-blue-700 border border-blue-300{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Alpine.js -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+    
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // Initialize Alpine.js data
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dropdown', () => ({
+                open: false
+            }));
+        });
+    </script>
+</body>
+</html>

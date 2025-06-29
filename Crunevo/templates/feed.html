@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Feed - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+        <!-- Main Feed Content -->
+        <div class="lg:col-span-8">
+            <!-- Create Post -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <form method="POST" action="{{ url_for('create_post') }}">
+                    {{ post_form.hidden_tag() }}
+                    <div class="flex space-x-4">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center">
+                            {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                        </div>
+                        <div class="flex-1">
+                            {{ post_form.content(class="w-full border-0 resize-none focus:ring-0 focus:outline-none bg-gray-100 dark:bg-gray-700 rounded-lg p-3 placeholder-gray-500", placeholder="¿Qué quieres compartir con la comunidad?", rows="3") }}
+                            
+                            <div class="flex items-center justify-between mt-4">
+                                <div class="flex space-x-4">
+                                    {{ post_form.post_type(class="text-sm border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white") }}
+                                    {{ post_form.subject(class="text-sm border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white", placeholder="Materia (opcional)") }}
+                                </div>
+                                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                    Publicar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Posts Feed -->
+            {% for post in posts.items %}
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <!-- Post Header -->
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center">
+                        {{ post.author.first_name[0] }}{{ post.author.last_name[0] }}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ url_for('profile', username=post.author.username) }}" 
+                               class="font-semibold text-gray-900 dark:text-white hover:text-primary">
+                                {{ post.author.get_full_name() }}
+                            </a>
+                            <span class="text-sm text-gray-500">@{{ post.author.username }}</span>
+                            {% if post.post_type != 'general' %}
+                                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                    {{ 'Pregunta' if post.post_type == 'question' else 'Discusión' }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            {{ format_time_ago(post.created_at) }}
+                            {% if post.subject %}
+                                • <span class="text-primary">{{ post.subject }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Post Content -->
+                <div class="mb-4">
+                    <p class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ post.content }}</p>
+                </div>
+                
+                <!-- Post Actions -->
+                <div class="flex items-center space-x-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <a href="{{ url_for('toggle_like', content_type='post', content_id=post.id) }}" 
+                       class="flex items-center space-x-2 text-gray-500 hover:text-red-500 transition-colors">
+                        <i data-feather="heart" class="h-5 w-5"></i>
+                        <span>{{ post.likes }}</span>
+                    </a>
+                    <button class="flex items-center space-x-2 text-gray-500 hover:text-primary transition-colors">
+                        <i data-feather="message-circle" class="h-5 w-5"></i>
+                        <span>{{ post.comments|length }}</span>
+                    </button>
+                    <button class="flex items-center space-x-2 text-gray-500 hover:text-primary transition-colors">
+                        <i data-feather="share" class="h-5 w-5"></i>
+                        <span>Compartir</span>
+                    </button>
+                </div>
+                
+                <!-- Comments Section -->
+                {% if post.comments %}
+                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    {% for comment in post.comments[:3] %}
+                    <div class="flex space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm">
+                            {{ comment.author.first_name[0] }}{{ comment.author.last_name[0] }}
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="font-semibold text-sm text-gray-900 dark:text-white">
+                                        {{ comment.author.get_full_name() }}
+                                    </span>
+                                    <span class="text-xs text-gray-500">{{ format_time_ago(comment.created_at) }}</span>
+                                </div>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Add Comment -->
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <form method="POST" action="{{ url_for('add_comment', content_type='post', content_id=post.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="flex space-x-3">
+                            <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm">
+                                {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                            </div>
+                            <div class="flex-1">
+                                <input name="content" type="text" placeholder="Escribe un comentario..." 
+                                       class="w-full border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                            </div>
+                            <button type="submit" class="text-primary hover:text-primary/80">
+                                <i data-feather="send" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Pagination -->
+            {% if posts.pages > 1 %}
+            <div class="flex justify-center mt-8">
+                <nav class="flex space-x-2">
+                    {% if posts.has_prev %}
+                        <a href="{{ url_for('feed', page=posts.prev_num) }}" 
+                           class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                            Anterior
+                        </a>
+                    {% endif %}
+                    
+                    {% for page_num in posts.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != posts.page %}
+                                <a href="{{ url_for('feed', page=page_num) }}" 
+                                   class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                                    {{ page_num }}
+                                </a>
+                            {% else %}
+                                <span class="px-3 py-2 bg-primary text-white rounded-lg text-sm">{{ page_num }}</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-500">…</span>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if posts.has_next %}
+                        <a href="{{ url_for('feed', page=posts.next_num) }}" 
+                           class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                            Siguiente
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="lg:col-span-4 mt-8 lg:mt-0">
+            <!-- Quick Stats -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tu Progreso</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-5 w-5" alt="Crolars">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Crolars</span>
+                        </div>
+                        <span class="font-semibold text-primary">{{ current_user.crolars }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <i data-feather="file-text" class="h-5 w-5 text-gray-400"></i>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Apuntes</span>
+                        </div>
+                        <span class="font-semibold">{{ current_user.notes|length }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <i data-feather="award" class="h-5 w-5 text-gray-400"></i>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Nivel</span>
+                        </div>
+                        <span class="font-semibold">{{ current_user.level }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Missions -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Misiones Activas</h3>
+                    <a href="{{ url_for('missions') }}" class="text-primary hover:text-primary/80 text-sm">Ver todas</a>
+                </div>
+                <div class="space-y-3">
+                    {% for mission in active_missions %}
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ mission.title }}</h4>
+                            <div class="flex items-center space-x-1">
+                                <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4" alt="Crolars">
+                                <span class="text-xs text-primary font-semibold">+{{ mission.crolars_reward }}</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">{{ mission.description }}</p>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                            <div class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Recent Notes -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Apuntes Recientes</h3>
+                    <a href="{{ url_for('upload_note') }}" class="text-primary hover:text-primary/80 text-sm">Subir apunte</a>
+                </div>
+                <div class="space-y-3">
+                    {% for note in notes[:5] %}
+                    <a href="{{ url_for('note_detail', id=note.id) }}" 
+                       class="block bg-gray-50 dark:bg-gray-700 rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i data-feather="file-text" class="h-5 w-5 text-primary"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                    {{ note.title }}
+                                </h4>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">
+                                    {{ note.subject }} • {{ format_time_ago(note.created_at) }}
+                                </p>
+                            </div>
+                            <div class="flex items-center space-x-1 text-xs text-gray-500">
+                                <i data-feather="heart" class="h-3 w-3"></i>
+                                <span>{{ note.likes }}</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Top Contributors -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Contribuidores</h3>
+                <div class="space-y-3">
+                    {% for user in top_users %}
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm">
+                            {{ user.first_name[0] }}{{ user.last_name[0] }}
+                        </div>
+                        <div class="flex-1">
+                            <a href="{{ url_for('profile', username=user.username) }}" 
+                               class="text-sm font-semibold text-gray-900 dark:text-white hover:text-primary">
+                                {{ user.get_full_name() }}
+                            </a>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">{{ user.total_points }} puntos</p>
+                        </div>
+                        <div class="text-xs text-primary font-semibold">#{{ loop.index }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

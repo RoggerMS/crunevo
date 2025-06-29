@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Crunebot - Asistente IA - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+        <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                <i data-feather="message-circle" class="h-8 w-8 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Crunebot</h1>
+                <p class="text-gray-600 dark:text-gray-300">Tu asistente educativo personalizado con IA</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Conversations Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm h-96 lg:h-[600px] flex flex-col">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Conversaciones</h2>
+                        <button onclick="startNewConversation()" 
+                                class="bg-primary text-white px-3 py-1 rounded-lg text-sm hover:bg-purple-700 transition-colors">
+                            Nueva
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div id="conversations-list">
+                        {% if conversations %}
+                            {% for conversation in conversations %}
+                            <div class="conversation-item p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer mb-2"
+                                 onclick="loadConversation({{ conversation.id }})">
+                                <h3 class="font-medium text-gray-900 dark:text-white text-sm truncate">
+                                    {{ conversation.title }}
+                                </h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ conversation.updated_at.strftime('%d/%m/%Y %H:%M') }}
+                                </p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-gray-500 dark:text-gray-400">
+                                <i data-feather="message-circle" class="h-12 w-12 mx-auto mb-2 opacity-50"></i>
+                                <p>No tienes conversaciones aún</p>
+                                <p class="text-sm">Inicia una nueva conversación</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm h-96 lg:h-[600px] flex flex-col">
+                <!-- Chat Header -->
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-semibold text-gray-900 dark:text-white" id="chat-title">
+                                Crunebot - Asistente Educativo
+                            </h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Powered by OpenAI • Especializado en educación
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                En línea
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messages-container">
+                    <!-- Welcome Message -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i data-feather="cpu" class="h-4 w-4 text-white"></i>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-xs lg:max-w-md">
+                            <p class="text-gray-900 dark:text-white text-sm">
+                                ¡Hola! Soy Crunebot, tu asistente educativo. Puedo ayudarte con conceptos académicos, 
+                                técnicas de estudio, resolver dudas y mucho más. ¿En qué puedo ayudarte hoy?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex space-x-3">
+                        <div class="flex-1">
+                            <textarea id="message-input" 
+                                      placeholder="Escribe tu pregunta o duda..." 
+                                      rows="2"
+                                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                      onkeydown="handleKeyPress(event)"></textarea>
+                        </div>
+                        <button onclick="sendMessage()" 
+                                id="send-button"
+                                class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i data-feather="send" class="h-5 w-5"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button onclick="sendQuickMessage('Explícame las ecuaciones cuadráticas')" 
+                                class="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            Matemáticas
+                        </button>
+                        <button onclick="sendQuickMessage('¿Cómo puedo mejorar mis técnicas de estudio?')" 
+                                class="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            Técnicas de estudio
+                        </button>
+                        <button onclick="sendQuickMessage('Ayúdame a crear un horario de estudio')" 
+                                class="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            Organización
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentConversationId = null;
+let isLoading = false;
+
+function startNewConversation() {
+    currentConversationId = null;
+    document.getElementById('chat-title').textContent = 'Nueva Conversación';
+    clearMessages();
+    showWelcomeMessage();
+}
+
+function loadConversation(conversationId) {
+    if (isLoading) return;
+    
+    isLoading = true;
+    currentConversationId = conversationId;
+    
+    fetch(`/crunebot/conversation/${conversationId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('chat-title').textContent = data.conversation.title;
+            clearMessages();
+            
+            data.messages.forEach(message => {
+                addMessage(message.content, message.is_user_message);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading conversation:', error);
+            showToast('Error al cargar la conversación', 'error');
+        })
+        .finally(() => {
+            isLoading = false;
+        });
+}
+
+function sendMessage() {
+    const input = document.getElementById('message-input');
+    const message = input.value.trim();
+    
+    if (!message || isLoading) return;
+    
+    sendMessageContent(message);
+    input.value = '';
+}
+
+function sendQuickMessage(message) {
+    if (isLoading) return;
+    sendMessageContent(message);
+}
+
+function sendMessageContent(message) {
+    isLoading = true;
+    document.getElementById('send-button').disabled = true;
+    
+    // Add user message to UI
+    addMessage(message, true);
+    
+    // Add loading indicator
+    const loadingId = addLoadingMessage();
+    
+    const url = currentConversationId 
+        ? `/crunebot/conversation/${currentConversationId}/message`
+        : '/crunebot/new';
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeLoadingMessage(loadingId);
+        
+        if (data.error) {
+            showToast(data.error, 'error');
+            return;
+        }
+        
+        // Update conversation ID if it's a new conversation
+        if (data.conversation_id) {
+            currentConversationId = data.conversation_id;
+            document.getElementById('chat-title').textContent = data.title;
+            
+            // Add to conversations list
+            addConversationToList(data.conversation_id, data.title);
+        }
+        
+        // Add AI response
+        addMessage(data.ai_response, false);
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+        removeLoadingMessage(loadingId);
+        showToast('Error al enviar mensaje', 'error');
+    })
+    .finally(() => {
+        isLoading = false;
+        document.getElementById('send-button').disabled = false;
+    });
+}
+
+function addMessage(content, isUser) {
+    const container = document.getElementById('messages-container');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'flex items-start space-x-3';
+    
+    if (isUser) {
+        messageDiv.innerHTML = `
+            <div class="flex-1"></div>
+            <div class="bg-primary text-white rounded-lg p-3 max-w-xs lg:max-w-md">
+                <p class="text-sm">${content}</p>
+            </div>
+            <div class="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <i data-feather="user" class="h-4 w-4 text-gray-600 dark:text-gray-300"></i>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <i data-feather="cpu" class="h-4 w-4 text-white"></i>
+            </div>
+            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-xs lg:max-w-md">
+                <p class="text-gray-900 dark:text-white text-sm">${content}</p>
+            </div>
+        `;
+    }
+    
+    container.appendChild(messageDiv);
+    feather.replace();
+    container.scrollTop = container.scrollHeight;
+}
+
+function addLoadingMessage() {
+    const container = document.getElementById('messages-container');
+    const loadingDiv = document.createElement('div');
+    const loadingId = 'loading-' + Date.now();
+    loadingDiv.id = loadingId;
+    loadingDiv.className = 'flex items-start space-x-3';
+    
+    loadingDiv.innerHTML = `
+        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <i data-feather="cpu" class="h-4 w-4 text-white"></i>
+        </div>
+        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+            <div class="flex space-x-1">
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(loadingDiv);
+    feather.replace();
+    container.scrollTop = container.scrollHeight;
+    
+    return loadingId;
+}
+
+function removeLoadingMessage(loadingId) {
+    const loadingElement = document.getElementById(loadingId);
+    if (loadingElement) {
+        loadingElement.remove();
+    }
+}
+
+function clearMessages() {
+    document.getElementById('messages-container').innerHTML = '';
+}
+
+function showWelcomeMessage() {
+    addMessage('¡Hola! Soy Crunebot, tu asistente educativo. Puedo ayudarte con conceptos académicos, técnicas de estudio, resolver dudas y mucho más. ¿En qué puedo ayudarte hoy?', false);
+}
+
+function addConversationToList(conversationId, title) {
+    const conversationsList = document.getElementById('conversations-list');
+    const conversationDiv = document.createElement('div');
+    conversationDiv.className = 'conversation-item p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer mb-2';
+    conversationDiv.onclick = () => loadConversation(conversationId);
+    
+    conversationDiv.innerHTML = `
+        <h3 class="font-medium text-gray-900 dark:text-white text-sm truncate">${title}</h3>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Hace un momento</p>
+    `;
+    
+    conversationsList.prepend(conversationDiv);
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    if (!currentConversationId) {
+        showWelcomeMessage();
+    }
+});
+</script>
+{% endblock %}

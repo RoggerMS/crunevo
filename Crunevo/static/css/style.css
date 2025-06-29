@@ -1,0 +1,511 @@
+/* CRUNEVO Custom Styles */
+
+/* CSS Variables for consistent theming */
+:root {
+    --primary: #7E57C2;
+    --secondary: #FFFFFF;
+    --neutral: #F5F5F5;
+    --accent: #87CEEB;
+    --dark: #1A1A1A;
+    --primary-light: rgba(126, 87, 194, 0.1);
+    --primary-dark: rgba(126, 87, 194, 0.9);
+    --accent-light: rgba(135, 206, 235, 0.1);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark mode variables */
+.dark {
+    --neutral: #1A1A1A;
+    --secondary: #374151;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40%, 43% {
+        transform: translateY(-8px);
+    }
+    70% {
+        transform: translateY(-4px);
+    }
+    90% {
+        transform: translateY(-2px);
+    }
+}
+
+/* Utility classes */
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+.animate-pulse-custom {
+    animation: pulse 2s infinite;
+}
+
+.animate-bounce-custom {
+    animation: bounce 1s infinite;
+}
+
+/* Custom text truncation */
+.line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+/* Custom scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--neutral);
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* Enhanced button styles */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #9C27B0 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #8E24AA 100%);
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Card enhancements */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Custom form elements */
+.form-input {
+    border-radius: 8px;
+    border: 2px solid #E5E7EB;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+    background: var(--secondary);
+}
+
+.form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    outline: none;
+}
+
+.dark .form-input {
+    background: #374151;
+    border-color: #4B5563;
+    color: white;
+}
+
+.dark .form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Notification styles */
+.notification {
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification-success {
+    background: #D1FAE5;
+    border: 1px solid #10B981;
+    color: #065F46;
+}
+
+.notification-error {
+    background: #FEE2E2;
+    border: 1px solid #EF4444;
+    color: #991B1B;
+}
+
+.notification-info {
+    background: #DBEAFE;
+    border: 1px solid #3B82F6;
+    color: #1E40AF;
+}
+
+/* Progress bars */
+.progress-bar {
+    background: #E5E7EB;
+    border-radius: 9999px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+}
+
+/* Avatar styles */
+.avatar {
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    background: var(--primary);
+    color: white;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+}
+
+.avatar-md {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+}
+
+.avatar-lg {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+}
+
+.avatar-xl {
+    width: 64px;
+    height: 64px;
+    font-size: 20px;
+}
+
+/* Badge styles */
+.badge {
+    border-radius: 9999px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-primary {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.badge-accent {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.badge-success {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.badge-warning {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.badge-error {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Responsive navigation */
+@media (max-width: 768px) {
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--secondary);
+        border-top: 1px solid #E5E7EB;
+        padding: 8px 0;
+        z-index: 50;
+    }
+    
+    .dark .mobile-nav {
+        background: #111827;
+        border-top-color: #374151;
+    }
+}
+
+/* File upload area */
+.file-upload-area {
+    border: 2px dashed #D1D5DB;
+    border-radius: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.file-upload-area.drag-over {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: scale(1.02);
+}
+
+/* Loading states */
+.loading {
+    position: relative;
+    color: transparent;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 2px solid #E5E7EB;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Custom focus styles */
+.focus-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #9C27B0 100%);
+}
+
+.gradient-accent {
+    background: linear-gradient(135deg, var(--accent) 0%, #5DADE2 100%);
+}
+
+.gradient-neutral {
+    background: linear-gradient(135deg, var(--neutral) 0%, #F8F9FA 100%);
+}
+
+/* Text gradients */
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Custom shadows */
+.shadow-colored {
+    box-shadow: 0 10px 25px -5px rgba(126, 87, 194, 0.2), 0 4px 6px -2px rgba(126, 87, 194, 0.1);
+}
+
+/* Image placeholders */
+.img-placeholder {
+    background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0),
+                linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+}
+
+/* Dark mode specific styles */
+.dark .img-placeholder {
+    background: linear-gradient(45deg, #374151 25%, transparent 25%, transparent 75%, #374151 75%, #374151),
+                linear-gradient(45deg, #374151 25%, transparent 25%, transparent 75%, #374151 75%, #374151);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .print-break {
+        page-break-before: always;
+    }
+}
+
+/* Accessibility improvements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .btn-primary {
+        border: 2px solid white;
+    }
+    
+    .form-input {
+        border-width: 3px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Custom utilities for CRUNEVO */
+.crolars-bg {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+.achievement-glow {
+    box-shadow: 0 0 20px rgba(126, 87, 194, 0.4);
+}
+
+.mission-progress {
+    background: linear-gradient(90deg, var(--primary) var(--progress, 0%), transparent var(--progress, 0%));
+}
+
+/* Interactive elements */
+.interactive {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.interactive:hover {
+    transform: translateY(-1px);
+}
+
+.interactive:active {
+    transform: translateY(0);
+}
+
+/* Content spacing */
+.content-spacing > * + * {
+    margin-top: 1rem;
+}
+
+.content-spacing-lg > * + * {
+    margin-top: 1.5rem;
+}
+
+/* Grid system enhancements */
+.grid-auto-fit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.grid-auto-fill {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}

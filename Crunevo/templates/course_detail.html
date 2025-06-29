@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <!-- Course Header -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h1>
+                        <p class="text-gray-600 dark:text-gray-300">{{ course.description }}</p>
+                    </div>
+                    {% if course.is_premium %}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                            <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="w-4 h-4 mr-1" alt="Crolars">
+                            {{ course.price_crolars }} Crolars
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            Gratis
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+                    <span class="flex items-center">
+                        <i data-feather="user" class="h-4 w-4 mr-1"></i>
+                        {{ course.instructor.get_full_name() }}
+                    </span>
+                    <span class="flex items-center">
+                        <i data-feather="clock" class="h-4 w-4 mr-1"></i>
+                        {{ videos|length }} videos
+                    </span>
+                    <span class="flex items-center">
+                        <i data-feather="tag" class="h-4 w-4 mr-1"></i>
+                        {{ course.category }}
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                           {% if course.difficulty_level == 'beginner' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                           {% elif course.difficulty_level == 'intermediate' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                           {% else %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200{% endif %}">
+                        {% if course.difficulty_level == 'beginner' %}Principiante
+                        {% elif course.difficulty_level == 'intermediate' %}Intermedio
+                        {% else %}Avanzado{% endif %}
+                    </span>
+                </div>
+
+                <!-- Enrollment Button -->
+                {% if current_user.is_authenticated %}
+                    {% if enrollment %}
+                        <div class="mt-6 p-4 bg-green-50 dark:bg-green-900 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-green-800 dark:text-green-200">Ya estás inscrito</h3>
+                                    <p class="text-green-600 dark:text-green-300">Progreso: {{ "%.0f"|format(enrollment.progress_percentage) }}%</p>
+                                </div>
+                                <div class="w-16 h-16 relative">
+                                    <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                                        <path class="text-green-200 dark:text-green-700" stroke="currentColor" stroke-width="3" fill="none"
+                                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        <path class="text-green-500" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"
+                                              stroke-dasharray="{{ enrollment.progress_percentage }}, 100"
+                                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <span class="text-sm font-semibold text-green-800 dark:text-green-200">{{ "%.0f"|format(enrollment.progress_percentage) }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="mt-6">
+                            {% if course.is_premium and current_user.crolars < course.price_crolars %}
+                                <div class="p-4 bg-red-50 dark:bg-red-900 rounded-lg mb-4">
+                                    <p class="text-red-800 dark:text-red-200">
+                                        Necesitas {{ course.price_crolars - current_user.crolars }} Crolars más para inscribirte en este curso.
+                                    </p>
+                                </div>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('enroll_course', course_id=course.id) }}">
+                                {{ csrf_token() }}
+                                <button type="submit" 
+                                        class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors text-lg font-semibold
+                                               {% if course.is_premium and current_user.crolars < course.price_crolars %}opacity-50 cursor-not-allowed{% endif %}"
+                                        {% if course.is_premium and current_user.crolars < course.price_crolars %}disabled{% endif %}>
+                                    {% if course.is_premium %}
+                                        Inscribirse por {{ course.price_crolars }} Crolars
+                                    {% else %}
+                                        Inscribirse Gratis
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                        <p class="text-blue-800 dark:text-blue-200 mb-3">Inicia sesión para inscribirte en este curso</p>
+                        <a href="{{ url_for('login') }}" 
+                           class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors">
+                            Iniciar Sesión
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Video Player (if enrolled) -->
+            {% if enrollment and videos %}
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Video Actual</h2>
+                    <div id="video-player" class="aspect-video bg-black rounded-lg overflow-hidden">
+                        <iframe id="youtube-player" 
+                                width="100%" 
+                                height="100%" 
+                                src="https://www.youtube.com/embed/{{ videos[0].youtube_url.split('/')[-1].split('=')[-1] }}?enablejsapi=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Course Videos -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Contenido del Curso</h3>
+                <div class="space-y-3">
+                    {% for video in videos %}
+                        <div class="course-video p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                             data-video-url="{{ video.youtube_url }}"
+                             data-video-title="{{ video.title }}">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0">
+                                    {% if enrollment %}
+                                        <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                                            {{ loop.index }}
+                                        </div>
+                                    {% else %}
+                                        <div class="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                                            <i data-feather="lock" class="h-4 w-4 text-gray-500"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">{{ video.title }}</h4>
+                                    {% if video.description %}
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ video.description }}</p>
+                                    {% endif %}
+                                    <div class="flex items-center mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                        <i data-feather="clock" class="h-3 w-3 mr-1"></i>
+                                        {{ video.duration_minutes }} min
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Course Stats -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mt-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Estadísticas</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">Videos:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ videos|length }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">Duración total:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">
+                            {{ videos|sum(attribute='duration_minutes') }} min
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">Nivel:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">
+                            {% if course.difficulty_level == 'beginner' %}Principiante
+                            {% elif course.difficulty_level == 'intermediate' %}Intermedio
+                            {% else %}Avanzado{% endif %}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">Instructor:</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ course.instructor.get_full_name() }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+{% if enrollment %}
+// Video player functionality for enrolled users
+document.addEventListener('DOMContentLoaded', function() {
+    const videoItems = document.querySelectorAll('.course-video');
+    const videoPlayer = document.getElementById('youtube-player');
+    
+    videoItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const videoUrl = this.dataset.videoUrl;
+            const videoTitle = this.dataset.videoTitle;
+            
+            // Extract YouTube video ID
+            const videoId = extractYouTubeId(videoUrl);
+            if (videoId) {
+                videoPlayer.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
+                
+                // Update active video
+                videoItems.forEach(v => v.classList.remove('bg-blue-50', 'dark:bg-blue-900'));
+                this.classList.add('bg-blue-50', 'dark:bg-blue-900');
+            }
+        });
+    });
+});
+
+function extractYouTubeId(url) {
+    const patterns = [
+        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+        /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]+)/,
+        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+    }
+    return null;
+}
+{% endif %}
+</script>
+{% endblock %}

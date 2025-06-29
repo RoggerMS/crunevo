@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Marketplace - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Marketplace Estudiantil</h1>
+                <p class="text-gray-600 dark:text-gray-400">Intercambia recursos educativos usando tus Crolars</p>
+            </div>
+            <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+                <div class="flex items-center bg-primary/10 px-4 py-2 rounded-lg">
+                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-5 w-5 mr-2" alt="Crolars">
+                    <span class="font-semibold text-primary">{{ current_user.crolars }} Crolars</span>
+                </div>
+                <a href="{{ url_for('sell_item') }}" 
+                   class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center space-x-2">
+                    <i data-feather="plus" class="h-5 w-5"></i>
+                    <span>Vender Artículo</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex flex-wrap items-center gap-4">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtrar por categoría:</span>
+            <div class="flex flex-wrap gap-2">
+                <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">
+                    Todos
+                </button>
+                <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600">
+                    Digital
+                </button>
+                <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600">
+                    Físico
+                </button>
+                <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600">
+                    Servicios
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Items Grid -->
+    {% if items.items %}
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        {% for item in items.items %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <!-- Item Image/Icon -->
+            <div class="h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+                        {% if item.item_type == 'digital' %}
+                            <i data-feather="download" class="h-8 w-8 text-primary"></i>
+                        {% elif item.item_type == 'physical' %}
+                            <i data-feather="package" class="h-8 w-8 text-primary"></i>
+                        {% else %}
+                            <i data-feather="briefcase" class="h-8 w-8 text-primary"></i>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="p-6">
+                <!-- Item Header -->
+                <div class="flex items-start justify-between mb-3">
+                    <span class="bg-{{ 'blue' if item.item_type == 'digital' else 'green' if item.item_type == 'physical' else 'purple' }}-100 text-{{ 'blue' if item.item_type == 'digital' else 'green' if item.item_type == 'physical' else 'purple' }}-800 text-xs px-2 py-1 rounded-full font-medium">
+                        {{ item.item_type.title() }}
+                    </span>
+                    <div class="flex items-center space-x-1">
+                        <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4" alt="Crolars">
+                        <span class="font-bold text-primary">{{ item.price_crolars }}</span>
+                    </div>
+                </div>
+                
+                <!-- Item Title -->
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {{ item.title }}
+                </h3>
+                
+                <!-- Item Description -->
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    {{ item.description }}
+                </p>
+                
+                <!-- Seller Info -->
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-6 h-6 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">
+                        {{ item.seller.first_name[0] }}{{ item.seller.last_name[0] }}
+                    </div>
+                    <a href="{{ url_for('profile', username=item.seller.username) }}" 
+                       class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary">
+                        {{ item.seller.get_full_name() }}
+                    </a>
+                    <span class="text-xs text-gray-500">•</span>
+                    <span class="text-xs text-gray-500">{{ format_time_ago(item.created_at) }}</span>
+                </div>
+                
+                <!-- Stock Info -->
+                {% if item.stock > 0 %}
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            Stock: <span class="font-semibold">{{ item.stock }}</span>
+                        </span>
+                        {% if item.stock <= 5 %}
+                            <span class="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                                ¡Solo quedan {{ item.stock }}!
+                            </span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="mb-4">
+                        <span class="text-sm text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                            Agotado
+                        </span>
+                    </div>
+                {% endif %}
+                
+                <!-- Action Button -->
+                {% if item.stock > 0 %}
+                    {% if current_user.crolars >= item.price_crolars %}
+                        <button class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors font-medium">
+                            Comprar por {{ item.price_crolars }} Crolars
+                        </button>
+                    {% else %}
+                        <button class="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-lg cursor-not-allowed font-medium" disabled>
+                            Crolars insuficientes
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <button class="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-lg cursor-not-allowed font-medium" disabled>
+                        No disponible
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if items.pages > 1 %}
+    <div class="flex justify-center">
+        <nav class="flex space-x-2">
+            {% if items.has_prev %}
+                <a href="{{ url_for('marketplace', page=items.prev_num) }}" 
+                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Anterior
+                </a>
+            {% endif %}
+            
+            {% for page_num in items.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != items.page %}
+                        <a href="{{ url_for('marketplace', page=page_num) }}" 
+                           class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                            {{ page_num }}
+                        </a>
+                    {% else %}
+                        <span class="px-4 py-2 bg-primary text-white rounded-lg text-sm">{{ page_num }}</span>
+                    {% endif %}
+                {% else %}
+                    <span class="px-4 py-2 text-gray-500">…</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if items.has_next %}
+                <a href="{{ url_for('marketplace', page=items.next_num) }}" 
+                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Siguiente
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-16">
+        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i data-feather="shopping-bag" class="h-12 w-12 text-gray-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            No hay artículos disponibles
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-8">
+            Sé el primero en publicar un artículo en el marketplace
+        </p>
+        <a href="{{ url_for('sell_item') }}" 
+           class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center space-x-2">
+            <i data-feather="plus" class="h-5 w-5"></i>
+            <span>Vender Artículo</span>
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Info Section -->
+    <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl p-8 mt-12">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                ¿Cómo funciona el Marketplace?
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8 mt-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="upload" class="h-8 w-8 text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">1. Publica</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Sube recursos educativos, libros, materiales o servicios de tutoría
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-feather="users" class="h-8 w-8 text-accent"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">2. Conecta</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Otros estudiantes descubren tus recursos y se interesan
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-8 w-8" alt="Crolars">
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-2">3. Intercambia</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Usa Crolars para obtener recursos que necesitas para estudiar
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

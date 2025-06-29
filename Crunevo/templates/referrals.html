@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Sistema de Referidos - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+        <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                <i data-feather="users" class="h-8 w-8 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Sistema de Referidos</h1>
+                <p class="text-gray-600 dark:text-gray-300">Invita amigos y gana Crolars por cada registro</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                    <i data-feather="user-plus" class="h-6 w-6 text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ referral.uses_count }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Amigos invitados</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="w-6 h-6" alt="Crolars">
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ referral.crolars_earned }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Crolars ganados</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                    <i data-feather="gift" class="h-6 w-6 text-green-600 dark:text-green-400"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">50</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Crolars por invitación</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Link -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Tu Enlace de Invitación</h2>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+            <div class="flex items-center space-x-3">
+                <div class="flex-1">
+                    <input type="text" 
+                           id="referral-link" 
+                           value="{{ request.url_root }}register?ref={{ referral.referral_code }}"
+                           readonly
+                           class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white">
+                </div>
+                <button onclick="copyReferralLink()" 
+                        class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                    <i data-feather="copy" class="h-5 w-5"></i>
+                </button>
+            </div>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            Comparte este enlace con tus amigos. Cuando se registren usando tu enlace, ambos ganarán 50 Crolars.
+        </p>
+    </div>
+
+    <!-- Referral Code -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Tu Código de Referido</h2>
+        <div class="bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg p-6 text-white">
+            <div class="text-center">
+                <div class="text-3xl font-bold tracking-wider mb-2">{{ referral.referral_code }}</div>
+                <p class="text-purple-100">Comparte este código con tus amigos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">¿Cómo Funciona?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-feather="share-2" class="h-8 w-8 text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">1. Comparte</h3>
+                <p class="text-gray-600 dark:text-gray-300">Envía tu enlace de invitación o código a tus amigos estudiantes</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-feather="user-check" class="h-8 w-8 text-green-600 dark:text-green-400"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">2. Se Registran</h3>
+                <p class="text-gray-600 dark:text-gray-300">Tus amigos se registran en CRUNEVO usando tu código</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="w-8 h-8" alt="Crolars">
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">3. Ganan Crolars</h3>
+                <p class="text-gray-600 dark:text-gray-300">Ambos reciben 50 Crolars automáticamente</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referred Friends -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Amigos Invitados</h2>
+        
+        {% if referred_users %}
+            <div class="space-y-4">
+                {% for user in referred_users %}
+                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                        {{ user.first_name[0] }}{{ user.last_name[0] }}
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">{{ user.get_full_name() }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            Se unió el {{ user.created_at.strftime('%d de %B, %Y') }}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <div class="flex items-center space-x-1">
+                            <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="w-5 h-5" alt="Crolars">
+                            <span class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">+50</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Crolars ganados</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-feather="users" class="h-12 w-12 text-gray-400"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Aún no has invitado a nadie</h3>
+                <p class="text-gray-500 dark:text-gray-400 mb-6">
+                    Comienza a invitar amigos y verás la lista aquí
+                </p>
+                <button onclick="copyReferralLink()" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-purple-700">
+                    Copiar enlace de invitación
+                    <i data-feather="copy" class="ml-2 h-4 w-4"></i>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Social Sharing -->
+    <div class="bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl shadow-sm p-6 mt-6">
+        <div class="text-center text-white">
+            <h2 class="text-xl font-bold mb-4">¡Comparte en Redes Sociales!</h2>
+            <div class="flex justify-center space-x-4">
+                <button onclick="shareOnWhatsApp()" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i data-feather="message-circle" class="h-5 w-5 inline mr-2"></i>
+                    WhatsApp
+                </button>
+                <button onclick="shareOnFacebook()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i data-feather="facebook" class="h-5 w-5 inline mr-2"></i>
+                    Facebook
+                </button>
+                <button onclick="shareOnTwitter()" 
+                        class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i data-feather="twitter" class="h-5 w-5 inline mr-2"></i>
+                    Twitter
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyReferralLink() {
+    const linkInput = document.getElementById('referral-link');
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999); // For mobile devices
+    
+    navigator.clipboard.writeText(linkInput.value).then(function() {
+        showToast('Enlace copiado al portapapeles', 'success');
+    }).catch(function(err) {
+        console.error('Error copying text: ', err);
+        showToast('Error al copiar enlace', 'error');
+    });
+}
+
+function shareOnWhatsApp() {
+    const referralCode = '{{ referral.referral_code }}';
+    const message = `¡Únete a CRUNEVO conmigo! Es una plataforma increíble para estudiantes universitarios donde puedes compartir apuntes, hacer preguntas y ganar recompensas. Usa mi código ${referralCode} al registrarte y ambos ganaremos 50 Crolars gratis. ${document.getElementById('referral-link').value}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function shareOnFacebook() {
+    const referralLink = document.getElementById('referral-link').value;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`;
+    window.open(facebookUrl, '_blank', 'width=600,height=400');
+}
+
+function shareOnTwitter() {
+    const referralCode = '{{ referral.referral_code }}';
+    const message = `¡Únete a CRUNEVO conmigo! Plataforma para estudiantes universitarios. Código: ${referralCode}`;
+    const referralLink = document.getElementById('referral-link').value;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(referralLink)}`;
+    window.open(twitterUrl, '_blank', 'width=600,height=400');
+}
+</script>
+{% endblock %}

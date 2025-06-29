@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Misiones - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-primary to-accent text-white rounded-xl shadow-lg p-8 mb-8">
+        <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                <i data-feather="target" class="h-8 w-8"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Misiones Diarias</h1>
+                <p class="text-primary-100">Completa desafíos y gana Crolars para mejorar tu ranking</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Overview -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-6 w-6" alt="Crolars">
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-primary">{{ current_user.crolars }}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Crolars Disponibles</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                    <i data-feather="trending-up" class="h-6 w-6 text-accent"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ current_user.total_points }}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Puntos Totales</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <i data-feather="award" class="h-6 w-6 text-primary"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ current_user.level }}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Nivel Actual</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mission Categories -->
+    <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Daily Missions -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <i data-feather="sun" class="h-5 w-5 text-primary"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Misiones Diarias</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Se reinician cada 24 horas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                {% for mission in missions %}
+                    {% if mission.mission_type == 'daily' %}
+                        {% set user_mission = user_missions[mission.id] %}
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 {% if user_mission.completed %}opacity-75{% endif %}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
+                                        {{ mission.title }}
+                                        {% if user_mission.completed %}
+                                            <i data-feather="check-circle" class="inline h-5 w-5 text-green-500 ml-2"></i>
+                                        {% endif %}
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ mission.description }}</p>
+                                </div>
+                                <div class="flex items-center space-x-1 ml-4">
+                                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4" alt="Crolars">
+                                    <span class="text-sm font-semibold text-primary">+{{ mission.crolars_reward }}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="mb-2">
+                                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                    <span>Progreso</span>
+                                    <span>{{ user_mission.progress }}/{{ mission.target_value }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div class="{% if user_mission.completed %}bg-green-500{% else %}bg-primary{% endif %} h-2 rounded-full transition-all duration-300" 
+                                         style="width: {{ (user_mission.progress / mission.target_value * 100) | round }}%"></div>
+                                </div>
+                            </div>
+                            
+                            {% if user_mission.completed %}
+                                <div class="flex items-center space-x-2 text-sm text-green-600">
+                                    <i data-feather="check" class="h-4 w-4"></i>
+                                    <span>¡Completada! Ganaste {{ mission.crolars_reward }} Crolars</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Weekly Missions -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                        <i data-feather="calendar" class="h-5 w-5 text-accent"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Misiones Semanales</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Más desafío, mejores recompensas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                {% for mission in missions %}
+                    {% if mission.mission_type == 'weekly' %}
+                        {% set user_mission = user_missions[mission.id] %}
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 {% if user_mission.completed %}opacity-75{% endif %}">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
+                                        {{ mission.title }}
+                                        {% if user_mission.completed %}
+                                            <i data-feather="check-circle" class="inline h-5 w-5 text-green-500 ml-2"></i>
+                                        {% endif %}
+                                    </h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ mission.description }}</p>
+                                </div>
+                                <div class="flex items-center space-x-1 ml-4">
+                                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4" alt="Crolars">
+                                    <span class="text-sm font-semibold text-primary">+{{ mission.crolars_reward }}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="mb-2">
+                                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                    <span>Progreso</span>
+                                    <span>{{ user_mission.progress }}/{{ mission.target_value }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div class="{% if user_mission.completed %}bg-green-500{% else %}bg-accent{% endif %} h-2 rounded-full transition-all duration-300" 
+                                         style="width: {{ (user_mission.progress / mission.target_value * 100) | round }}%"></div>
+                                </div>
+                            </div>
+                            
+                            {% if user_mission.completed %}
+                                <div class="flex items-center space-x-2 text-sm text-green-600">
+                                    <i data-feather="check" class="h-4 w-4"></i>
+                                    <span>¡Completada! Ganaste {{ mission.crolars_reward }} Crolars</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tips Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-8">
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">💡 Consejos para ganar más Crolars</h3>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i data-feather="upload" class="h-4 w-4 text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Sube apuntes de calidad</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Los apuntes bien organizados reciben más likes</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i data-feather="message-circle" class="h-4 w-4 text-accent"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Participa activamente</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Comenta y ayuda a otros estudiantes</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i data-feather="users" class="h-4 w-4 text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 dark:text-white text-sm">Conecta con otros</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Las interacciones generan más oportunidades</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leaderboard Preview -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">🏆 Ranking Semanal</h3>
+            <span class="text-sm text-gray-600 dark:text-gray-400">Top contribuidores</span>
+        </div>
+        
+        <div class="space-y-3">
+            <div class="flex items-center space-x-4 p-3 bg-gradient-to-r from-yellow-100 to-yellow-50 dark:from-yellow-900/20 dark:to-yellow-800/10 rounded-lg">
+                <div class="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                    1
+                </div>
+                <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                    {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold text-gray-900 dark:text-white">{{ current_user.get_full_name() }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ current_user.total_points }} puntos</p>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4" alt="Crolars">
+                    <span class="text-sm font-semibold text-primary">{{ current_user.crolars }}</span>
+                </div>
+            </div>
+            
+            <div class="text-center py-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400">Completa más misiones para subir en el ranking</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

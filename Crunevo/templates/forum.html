@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Foro - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Foro de Discusión</h1>
+                <p class="text-gray-600 dark:text-gray-400">Haz preguntas, comparte conocimiento y conecta con la comunidad</p>
+            </div>
+            <button onclick="document.getElementById('create-post-modal').classList.remove('hidden')"
+                    class="mt-4 sm:mt-0 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center space-x-2">
+                <i data-feather="plus" class="h-5 w-5"></i>
+                <span>Nueva Publicación</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex flex-wrap items-center gap-4">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtrar por:</span>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ url_for('forum', filter='all') }}" 
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                          {% if filter_type == 'all' %}bg-primary text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600{% endif %}">
+                    Todas
+                </a>
+                <a href="{{ url_for('forum', filter='questions') }}" 
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                          {% if filter_type == 'questions' %}bg-primary text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600{% endif %}">
+                    Preguntas
+                </a>
+                <a href="{{ url_for('forum', filter='discussions') }}" 
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                          {% if filter_type == 'discussions' %}bg-primary text-white{% else %}bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600{% endif %}">
+                    Discusiones
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Posts -->
+    <div class="space-y-6">
+        {% for post in posts.items %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <!-- Post Header -->
+            <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                    {{ post.author.first_name[0] }}{{ post.author.last_name[0] }}
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <a href="{{ url_for('profile', username=post.author.username) }}" 
+                           class="font-semibold text-gray-900 dark:text-white hover:text-primary">
+                            {{ post.author.get_full_name() }}
+                        </a>
+                        <span class="text-sm text-gray-500">@{{ post.author.username }}</span>
+                        <span class="text-sm text-gray-500">•</span>
+                        <span class="text-sm text-gray-500">{{ format_time_ago(post.created_at) }}</span>
+                        {% if post.post_type != 'general' %}
+                            <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">
+                                {{ 'Pregunta' if post.post_type == 'question' else 'Discusión' }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if post.subject %}
+                        <div class="mb-3">
+                            <span class="bg-accent/10 text-accent text-sm px-3 py-1 rounded-full font-medium">
+                                {{ post.subject }}
+                            </span>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Post Content -->
+                    <div class="prose dark:prose-invert max-w-none mb-4">
+                        <p class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ post.content }}</p>
+                    </div>
+                    
+                    <!-- Post Actions -->
+                    <div class="flex items-center space-x-6">
+                        <a href="{{ url_for('toggle_like', content_type='post', content_id=post.id) }}" 
+                           class="flex items-center space-x-2 text-gray-500 hover:text-red-500 transition-colors">
+                            <i data-feather="heart" class="h-5 w-5"></i>
+                            <span>{{ post.likes }}</span>
+                        </a>
+                        <button class="flex items-center space-x-2 text-gray-500 hover:text-primary transition-colors"
+                                onclick="toggleComments('post-{{ post.id }}')">
+                            <i data-feather="message-circle" class="h-5 w-5"></i>
+                            <span>{{ post.comments|length }} respuestas</span>
+                        </button>
+                        <button class="flex items-center space-x-2 text-gray-500 hover:text-primary transition-colors">
+                            <i data-feather="share" class="h-5 w-5"></i>
+                            <span>Compartir</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div id="comments-post-{{ post.id }}" class="hidden mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <!-- Existing Comments -->
+                {% if post.comments %}
+                    <div class="space-y-4 mb-6">
+                        {% for comment in post.comments %}
+                        <div class="flex space-x-3">
+                            <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">
+                                {{ comment.author.first_name[0] }}{{ comment.author.last_name[0] }}
+                            </div>
+                            <div class="flex-1">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <a href="{{ url_for('profile', username=comment.author.username) }}" 
+                                           class="font-semibold text-sm text-gray-900 dark:text-white hover:text-primary">
+                                            {{ comment.author.get_full_name() }}
+                                        </a>
+                                        <span class="text-xs text-gray-500">{{ format_time_ago(comment.created_at) }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
+                                </div>
+                                <div class="flex items-center space-x-4 mt-2">
+                                    <a href="{{ url_for('toggle_like', content_type='comment', content_id=comment.id) }}" 
+                                       class="flex items-center space-x-1 text-xs text-gray-500 hover:text-red-500 transition-colors">
+                                        <i data-feather="heart" class="h-3 w-3"></i>
+                                        <span>{{ comment.likes }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <!-- Add Comment Form -->
+                <form method="POST" action="{{ url_for('add_comment', content_type='post', content_id=post.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="flex space-x-3">
+                        <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                            {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                        </div>
+                        <div class="flex-1">
+                            <textarea name="content" rows="3" placeholder="Escribe tu respuesta..." 
+                                      class="w-full border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white resize-none focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+                            <div class="flex justify-end mt-2">
+                                <button type="submit" 
+                                        class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                    Responder
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if posts.pages > 1 %}
+    <div class="flex justify-center mt-8">
+        <nav class="flex space-x-2">
+            {% if posts.has_prev %}
+                <a href="{{ url_for('forum', page=posts.prev_num, filter=filter_type) }}" 
+                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Anterior
+                </a>
+            {% endif %}
+            
+            {% for page_num in posts.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != posts.page %}
+                        <a href="{{ url_for('forum', page=page_num, filter=filter_type) }}" 
+                           class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                            {{ page_num }}
+                        </a>
+                    {% else %}
+                        <span class="px-4 py-2 bg-primary text-white rounded-lg text-sm">{{ page_num }}</span>
+                    {% endif %}
+                {% else %}
+                    <span class="px-4 py-2 text-gray-500">…</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if posts.has_next %}
+                <a href="{{ url_for('forum', page=posts.next_num, filter=filter_type) }}" 
+                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800">
+                    Siguiente
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Create Post Modal -->
+<div id="create-post-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Nueva Publicación</h2>
+                <button onclick="document.getElementById('create-post-modal').classList.add('hidden')" 
+                        class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                    <i data-feather="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            
+            <form method="POST" action="{{ url_for('create_post') }}">
+                {{ post_form.hidden_tag() }}
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Tipo de publicación
+                        </label>
+                        <select name="post_type" class="w-full border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                            <option value="general">General</option>
+                            <option value="question">Pregunta</option>
+                            <option value="discussion">Discusión</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Materia (opcional)
+                        </label>
+                        <input type="text" name="subject" placeholder="Ej: Matemáticas, Física..." 
+                               class="w-full border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Contenido
+                        </label>
+                        <textarea name="content" rows="6" placeholder="¿Qué quieres compartir o preguntar?" 
+                                  class="w-full border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white resize-none" required></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="document.getElementById('create-post-modal').classList.add('hidden')" 
+                            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                        Publicar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleComments(postId) {
+    const commentsDiv = document.getElementById('comments-' + postId);
+    commentsDiv.classList.toggle('hidden');
+}
+</script>
+{% endblock %}

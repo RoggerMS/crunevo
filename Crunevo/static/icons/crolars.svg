@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="crolarsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="crolarsInner" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" style="stop-color:#FFFF99;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="crolarsShine" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:white;stop-opacity:0.6" />
+      <stop offset="70%" style="stop-color:white;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:white;stop-opacity:0" />
+    </radialGradient>
+    <filter id="coinShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#CC8400" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer coin rim -->
+  <circle cx="32" cy="32" r="30" fill="url(#crolarsGradient)" filter="url(#coinShadow)"/>
+  
+  <!-- Inner coin face -->
+  <circle cx="32" cy="32" r="26" fill="url(#crolarsInner)"/>
+  
+  <!-- Coin edge details -->
+  <circle cx="32" cy="32" r="29" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.7"/>
+  <circle cx="32" cy="32" r="27" fill="none" stroke="#DDD700" stroke-width="0.5" opacity="0.9"/>
+  
+  <!-- Central 'C' for Crolars -->
+  <g transform="translate(32, 32)">
+    <!-- Letter C -->
+    <path d="M8 -12 Q-8 -12 -8 0 Q-8 12 8 12 Q14 12 14 6" 
+          stroke="white" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.9"/>
+    <path d="M8 -10 Q-6 -10 -6 0 Q-6 10 8 10 Q12 10 12 6" 
+          stroke="#7E57C2" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Decorative elements around the coin -->
+  <g transform="translate(32, 32)">
+    <!-- Top star -->
+    <g transform="translate(0, -22)">
+      <path d="M0 -3 L1 0 L3 0 L1 2 L2 4 L0 3 L-2 4 L-1 2 L-3 0 L-1 0 Z" 
+            fill="white" opacity="0.8"/>
+    </g>
+    
+    <!-- Bottom star -->
+    <g transform="translate(0, 22)">
+      <path d="M0 -3 L1 0 L3 0 L1 2 L2 4 L0 3 L-2 4 L-1 2 L-3 0 L-1 0 Z" 
+            fill="white" opacity="0.8"/>
+    </g>
+    
+    <!-- Left accent -->
+    <g transform="translate(-22, 0)">
+      <circle cx="0" cy="0" r="2" fill="white" opacity="0.7"/>
+    </g>
+    
+    <!-- Right accent -->
+    <g transform="translate(22, 0)">
+      <circle cx="0" cy="0" r="2" fill="white" opacity="0.7"/>
+    </g>
+  </g>
+  
+  <!-- Shine effect -->
+  <ellipse cx="26" cy="26" rx="12" ry="16" fill="url(#crolarsShine)" transform="rotate(-25 26 26)"/>
+  
+  <!-- Inner glow -->
+  <circle cx="32" cy="32" r="26" fill="none" stroke="url(#crolarsInner)" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Text around the rim (optional) -->
+  <g transform="translate(32, 32)">
+    <path id="textCircle" d="M 0,0 m -24,0 a 24,24 0 1,1 48,0 a 24,24 0 1,1 -48,0" 
+          fill="none" stroke="none"/>
+    <text font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#B8860B" opacity="0.6">
+      <textPath href="#textCircle" startOffset="25%">CRUNEVO</textPath>
+    </text>
+  </g>
+  
+  <!-- Value indicator dots -->
+  <g transform="translate(32, 32)">
+    <circle cx="0" cy="-18" r="1" fill="#FFD700"/>
+    <circle cx="12.7" cy="-12.7" r="1" fill="#FFD700"/>
+    <circle cx="18" cy="0" r="1" fill="#FFD700"/>
+    <circle cx="12.7" cy="12.7" r="1" fill="#FFD700"/>
+    <circle cx="0" cy="18" r="1" fill="#FFD700"/>
+    <circle cx="-12.7" cy="12.7" r="1" fill="#FFD700"/>
+    <circle cx="-18" cy="0" r="1" fill="#FFD700"/>
+    <circle cx="-12.7" cy="-12.7" r="1" fill="#FFD700"/>
+  </g>
+</svg>

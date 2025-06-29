@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Mensajes - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center">
+                <i data-feather="message-circle" class="h-6 w-6"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Mensajes</h1>
+                <p class="text-gray-600 dark:text-gray-400">Conecta con otros estudiantes de la comunidad</p>
+            </div>
+        </div>
+    </div>
+    
+    {% if conversations %}
+    <!-- Conversations List -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Conversaciones</h2>
+        </div>
+        
+        <div class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for user_id, conversation in conversations.items() %}
+            <a href="{{ url_for('chat', username=conversation.username) }}" 
+               class="block p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                        {{ conversation.full_name.split()[0][0] }}{{ conversation.full_name.split()[-1][0] if conversation.full_name.split()|length > 1 else '' }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-gray-900 dark:text-white truncate">
+                                {{ conversation.full_name }}
+                            </h3>
+                            <span class="text-sm text-gray-500">@{{ conversation.username }}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Haz clic para ver la conversación
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <i data-feather="chevron-right" class="h-5 w-5 text-gray-400"></i>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-16">
+        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i data-feather="message-circle" class="h-12 w-12 text-gray-400"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            No tienes conversaciones
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            Comienza a conectar con otros estudiantes enviando mensajes desde sus perfiles o apuntes
+        </p>
+        
+        <!-- Suggestions -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-2xl mx-auto">
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">💡 ¿Cómo empezar a chatear?</h4>
+            <div class="grid md:grid-cols-2 gap-6 text-left">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-feather="user" class="h-4 w-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-medium text-gray-900 dark:text-white text-sm">Visita perfiles</h5>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Ve a los perfiles de otros estudiantes y envía un mensaje</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-feather="file-text" class="h-4 w-4 text-accent"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-medium text-gray-900 dark:text-white text-sm">Contacta autores</h5>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Pregunta sobre apuntes o recursos específicos</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-feather="message-square" class="h-4 w-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-medium text-gray-900 dark:text-white text-sm">Participa en foros</h5>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Responde preguntas y conecta naturalmente</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-feather="users" class="h-4 w-4 text-accent"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-medium text-gray-900 dark:text-white text-sm">Únete a discusiones</h5>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Comenta en apuntes y publicaciones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+            <a href="{{ url_for('feed') }}" 
+               class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors inline-flex items-center space-x-2">
+                <i data-feather="home" class="h-5 w-5"></i>
+                <span>Ir al Feed</span>
+            </a>
+            <a href="{{ url_for('forum') }}" 
+               class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors inline-flex items-center space-x-2">
+                <i data-feather="message-square" class="h-5 w-5"></i>
+                <span>Explorar Foro</span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Tips Section -->
+    <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl p-6 mt-8">
+        <div class="flex items-start space-x-4">
+            <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <i data-feather="shield-check" class="h-6 w-6 text-primary"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Consejos para mensajes seguros</h3>
+                <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <li>• Mantén las conversaciones relacionadas con estudios</li>
+                    <li>• Sé respetuoso y constructivo en tus mensajes</li>
+                    <li>• No compartas información personal sensible</li>
+                    <li>• Reporta cualquier comportamiento inapropiado</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

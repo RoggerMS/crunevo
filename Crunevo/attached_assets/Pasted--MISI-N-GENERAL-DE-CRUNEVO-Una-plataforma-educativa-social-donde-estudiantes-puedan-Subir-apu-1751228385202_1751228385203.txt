@@ -1,0 +1,211 @@
+🧠 MISIÓN GENERAL DE CRUNEVO
+Una plataforma educativa social donde estudiantes puedan:
+•	Subir apuntes, resolver dudas, compartir recursos, recibir recompensas.
+•	Todo en un entorno seguro, limpio, moderno y motivador.
+
+La tarea principal es realizar la pagina
+🌟 CRUNEVO: Plan Completo de Funcionalidades e Ideas
+Este documento resume claramente qué ideas se han implementado, cuáles están pendientes y cuáles quedaron en el aire.
+
+✅ Ya implementado o en desarrollo
+Autenticación y Seguridad 🔐
+
+Registro/Login básico y seguro.
+
+Integración con Google OAuth (pendiente implementar).
+
+Seguridad robusta: CSRF, sesiones, manejo errores (404, 500).
+
+Sistema de Créditos y Recompensas 🎁
+
+Sistema robusto donde los estudiantes ganan créditos según actividades académicas o interacciones sociales.
+
+Créditos basados en logros: subir apuntes, hacer comentarios útiles, recibir votos positivos.
+
+Posibilidad futura de compra/venta de créditos.
+
+Infraestructura y Despliegue 🖥️
+
+Migrado o migrándose a Fly.io.
+
+Uso de PostgreSQL.
+
+Gestión clara del despliegue continuo (CI/CD con GitHub).
+
+🛠️ Pendiente por mejorar o desarrollar completamente
+1. Panel de Administración 🧑‍🏫 en burrito.crunevo.com
+Gestión completa de usuarios, reportes y estadísticas.
+
+Administración avanzada de la tienda.
+
+2. Apuntes (Notas de estudiantes) 📝
+Subida directa y visualización online con Cloudinary.
+
+Sistema de comentarios más dinámico.
+
+Visualización enriquecida (PDF, videos embebidos).
+
+3. Tienda 🏪
+Sistema de productos digitales y físicos.
+
+Integración clara con créditos.
+
+4. Chat entre usuarios 💬
+Mejorar implementación actual, estilo Facebook Messenger.
+
+Seguridad adicional: bloqueo y reporte de usuarios.
+
+5. Feed Principal 📚
+Combinación visual intuitiva de publicaciones, apuntes recientes, eventos académicos.
+
+Interacción (comentarios, likes, compartir).
+
+6. Personalización 🎨
+Mejoras visuales avanzadas (animaciones, mensajes UX claros, diseño responsive fino).
+
+🚧 Pendiente por completo (originales)
+7. Asistente con IA 🤖
+Chat GPT-like, integrado dentro de Crunevo para apoyo académico.
+
+8. Ranking y Logros 🏆
+Sistema gamificado, logros visibles en perfiles públicos.
+
+Rankings semanales y mensuales.
+
+9. Foro de Preguntas y Respuestas 🌐
+Similar a Quora o Brainly, adaptado para estudiantes.
+
+10. Herramientas Educativas Extra 📅
+Calendario académico integrado.
+
+Eventos especiales: talleres, webinars, “Día del Apunte”, etc.
+
+11. Escalabilidad Futura 🌱
+Optimización para miles de usuarios simultáneos.
+
+Previsión para expansión a otras universidades o países.
+
+💡 Ideas anteriores que quedaron en el aire
+Feed académico combinado 📌
+
+Publicaciones generales mezcladas con apuntes destacados para un feed atractivo y dinámico.
+
+Donaciones responsables 💰
+
+Un sistema serio y claro para captar donaciones de usuarios con mejores recursos económicos, manteniendo la plataforma gratuita.
+
+Sistema de Afiliados 🔗
+
+Recompensas por referidos.
+
+Insignias por logros especiales 🥇
+
+Insignias visibles en el perfil que resalten aportes académicos o colaboración comunitaria (ej: “Experto Matemático”, “Mejor Editor”, etc.).
+
+Clubes por carrera o interés académico 👥
+
+Grupos privados o públicos para debatir, compartir apuntes y organizar eventos específicos.
+
+Modo Oscuro completo y personalizado 🌙
+
+Ya comenzado pero pendiente de ajustes UX/UI finos.
+
+Personalización Avanzada de Perfil 👤
+
+Avatares personalizados.
+
+Sección pública con logros, créditos, insignias y carrera elegida.
+
+🚀 Nuevas ideas propuestas recientemente
+Misiones académicas semanales 🧠
+
+Desafíos específicos con créditos extra.
+
+Explorador por carreras 🧬
+
+Organizar contenidos claramente según carreras específicas (Matemáticas, Educación, Informática, etc.).
+
+Marketplace estudiantil 🛍️
+
+Vender o intercambiar materiales físicos útiles entre estudiantes.
+
+Sistema de mentoría estudiantil 🎓
+
+Estudiantes avanzados ofreciendo soporte a estudiantes nuevos.
+
+Certificado simbólico por participación 🧾
+
+PDF descargable, motivacional, según participación en la plataforma.
+
+Comentarios anónimos (moderados) 🗨️
+
+Incentivar la participación en temas sensibles.
+
+🎨 Propuesta visual ideal (alineada con la tabla mostrada)
+Para cada fase, así quedaría el diseño ideal:
+
+🔧 Etapa actual (Back-end en movimiento):
+
+Diseño simple pero robusto, priorizar rendimiento y seguridad.
+
+Usar componentes básicos (Bootstrap o Tailwind).
+
+📐 Etapa MVP funcional:
+
+Diseño ordenado y fácil de usar, minimalista, muy visual y moderno (Facebook o Scribd).
+
+Navegación intuitiva, buena UI para móviles y escritorio.
+
+🚀 Producto casi listo:
+
+Pulido total de UX/UI, diseño fino, animaciones ligeras, estados vacíos y errores claros.
+
+Paleta morada distintiva con detalles visuales refinados.
+
+🎖️ Cómo queda tu sistema de créditos, logros y ranking
+Créditos:
+
+Ganados directamente por logros como subir apuntes, comentar, recibir likes, ayudar a otros usuarios.
+
+Usados para recompensas internas (insignias, productos digitales o físicos).
+
+Logros específicos:
+
+Al subir tu primer apunte.
+
+Al recibir 100 likes en tus apuntes.
+
+Al ayudar a responder dudas en el foro.
+
+Por completar misiones semanales.
+
+Ranking académico-social:
+
+Semanal, mensual y total.
+
+Basado en créditos y actividad.
+
+Premia participación frecuente y colaboración.
+
+📌 Orden sugerido de implementación a partir de ahora:
+Apuntes 📝 (clave central, mayor actividad asegurada).
+
+Feed académico 📚 (para captar atención diaria).
+
+Panel Admin mejorado 🧑‍🏫 (soporte esencial para crecimiento).
+
+Ranking y logros 🏆 (motivación adicional).
+
+Misiones semanales 🧠 (fomento constante).
+
+Chat optimizado 💬 (mejor interacción).
+
+Foro académico 🌐 (soporte a la comunidad).
+
+Marketplace estudiantil 🛍️ (aporta valor tangible).
+
+Herramientas extra 📅 (eventos especiales).
+
+Asistente IA 🤖 (más avanzado, dejar para más adelante).
+
+Mentorías y explorador por carrera 🎓 (fase de escalado).

@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.get_full_name() }} - CRUNEVO{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Profile Header -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-primary to-accent h-32"></div>
+        <div class="relative px-6 pb-6">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
+                <div class="relative -mt-16 mb-4 sm:mb-0">
+                    <div class="w-32 h-32 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg">
+                        <div class="w-full h-full bg-primary text-white rounded-full flex items-center justify-center text-4xl font-bold">
+                            {{ user.first_name[0] }}{{ user.last_name[0] }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-1">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ user.get_full_name() }}
+                            </h1>
+                            <p class="text-gray-600 dark:text-gray-400">@{{ user.username }}</p>
+                            {% if user.career %}
+                                <p class="text-primary font-medium">{{ user.career.replace('-', ' ').title() }}</p>
+                            {% endif %}
+                            {% if user.university %}
+                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ user.university }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        {% if current_user == user %}
+                            <a href="{{ url_for('edit_profile') }}" 
+                               class="mt-4 sm:mt-0 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                Editar Perfil
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('chat', username=user.username) }}" 
+                               class="mt-4 sm:mt-0 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                Enviar Mensaje
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if user.bio %}
+                        <p class="mt-4 text-gray-700 dark:text-gray-300">{{ user.bio }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-primary">{{ user.crolars }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Crolars</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ user.notes|length }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Apuntes</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ user.total_points }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Puntos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ user.level }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Nivel</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-8">
+            <!-- Tabs -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg mb-6" x-data="{ activeTab: 'notes' }">
+                <div class="border-b border-gray-200 dark:border-gray-700">
+                    <nav class="flex space-x-8 px-6">
+                        <button @click="activeTab = 'notes'" 
+                                :class="{ 'border-primary text-primary': activeTab === 'notes', 'border-transparent text-gray-500': activeTab !== 'notes' }"
+                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-primary">
+                            Apuntes ({{ notes|length }})
+                        </button>
+                        <button @click="activeTab = 'posts'" 
+                                :class="{ 'border-primary text-primary': activeTab === 'posts', 'border-transparent text-gray-500': activeTab !== 'posts' }"
+                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-primary">
+                            Publicaciones ({{ posts|length }})
+                        </button>
+                        <button @click="activeTab = 'achievements'" 
+                                :class="{ 'border-primary text-primary': activeTab === 'achievements', 'border-transparent text-gray-500': activeTab !== 'achievements' }"
+                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-primary">
+                            Logros ({{ achievements|length }})
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- Notes Tab -->
+                <div x-show="activeTab === 'notes'" class="p-6">
+                    {% if notes %}
+                        <div class="grid gap-6">
+                            {% for note in notes %}
+                            <a href="{{ url_for('note_detail', id=note.id) }}" 
+                               class="block bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <i data-feather="file-text" class="h-8 w-8 text-primary"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                                            {{ note.title }}
+                                        </h3>
+                                        {% if note.description %}
+                                            <p class="text-gray-600 dark:text-gray-400 mt-1">{{ note.description[:100] }}{% if note.description|length > 100 %}...{% endif %}</p>
+                                        {% endif %}
+                                        <div class="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                                            <span class="bg-primary/10 text-primary px-2 py-1 rounded-full">{{ note.subject }}</span>
+                                            <span>{{ format_time_ago(note.created_at) }}</span>
+                                            <div class="flex items-center space-x-1">
+                                                <i data-feather="heart" class="h-4 w-4"></i>
+                                                <span>{{ note.likes }}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-1">
+                                                <i data-feather="eye" class="h-4 w-4"></i>
+                                                <span>{{ note.views }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <i data-feather="file-text" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No hay apuntes</h3>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                {% if current_user == user %}
+                                    ¡Sube tu primer apunte para comenzar a ganar Crolars!
+                                {% else %}
+                                    Este usuario aún no ha subido apuntes.
+                                {% endif %}
+                            </p>
+                            {% if current_user == user %}
+                                <a href="{{ url_for('upload_note') }}" 
+                                   class="mt-4 inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                    Subir Apunte
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Posts Tab -->
+                <div x-show="activeTab === 'posts'" class="p-6">
+                    {% if posts %}
+                        <div class="space-y-6">
+                            {% for post in posts %}
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <div class="flex items-center space-x-2 mb-3">
+                                    {% if post.post_type != 'general' %}
+                                        <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                            {{ 'Pregunta' if post.post_type == 'question' else 'Discusión' }}
+                                        </span>
+                                    {% endif %}
+                                    <span class="text-sm text-gray-500">{{ format_time_ago(post.created_at) }}</span>
+                                    {% if post.subject %}
+                                        <span class="text-sm text-primary">• {{ post.subject }}</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ post.content }}</p>
+                                <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
+                                    <div class="flex items-center space-x-1">
+                                        <i data-feather="heart" class="h-4 w-4"></i>
+                                        <span>{{ post.likes }}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <i data-feather="message-circle" class="h-4 w-4"></i>
+                                        <span>{{ post.comments|length }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <i data-feather="message-square" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No hay publicaciones</h3>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                {% if current_user == user %}
+                                    ¡Comparte algo con la comunidad!
+                                {% else %}
+                                    Este usuario aún no ha publicado nada.
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Achievements Tab -->
+                <div x-show="activeTab === 'achievements'" class="p-6">
+                    {% if achievements %}
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            {% for user_achievement in achievements %}
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                        <i data-feather="{{ user_achievement.achievement.icon }}" class="h-6 w-6 text-primary"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-gray-900 dark:text-white">
+                                            {{ user_achievement.achievement.name }}
+                                        </h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ user_achievement.achievement.description }}
+                                        </p>
+                                        <div class="flex items-center space-x-2 mt-2">
+                                            <img src="{{ url_for('static', filename='icons/crolars.svg') }}" class="h-4 w-4" alt="Crolars">
+                                            <span class="text-sm text-primary font-semibold">+{{ user_achievement.achievement.crolars_reward }}</span>
+                                            <span class="text-xs text-gray-500">• {{ format_time_ago(user_achievement.earned_at) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <i data-feather="award" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No hay logros</h3>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                {% if current_user == user %}
+                                    ¡Participa en la comunidad para desbloquear logros!
+                                {% else %}
+                                    Este usuario aún no ha desbloqueado logros.
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="lg:col-span-4 mt-8 lg:mt-0">
+            <!-- Joined Date -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Información</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <i data-feather="calendar" class="h-5 w-5 text-gray-400"></i>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Se unió</p>
+                            <p class="font-medium text-gray-900 dark:text-white">{{ user.created_at.strftime('%B %Y') }}</p>
+                        </div>
+                    </div>
+                    {% if user.career %}
+                    <div class="flex items-center space-x-3">
+                        <i data-feather="book-open" class="h-5 w-5 text-gray-400"></i>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Carrera</p>
+                            <p class="font-medium text-gray-900 dark:text-white">{{ user.career.replace('-', ' ').title() }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.university %}
+                    <div class="flex items-center space-x-3">
+                        <i data-feather="map-pin" class="h-5 w-5 text-gray-400"></i>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Universidad</p>
+                            <p class="font-medium text-gray-900 dark:text-white">{{ user.university }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Activity Summary -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actividad</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400">Apuntes subidos</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ user.notes|length }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400">Publicaciones</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ user.posts|length }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400">Comentarios</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ user.comments|length }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400">Logros</span>
+                        <span class="font-semibold text-gray-900 dark:text-white">{{ user.achievements|length }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
