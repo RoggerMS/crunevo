@@ -23,7 +23,7 @@ with app.app_context():
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('feed'))
-    return render_template('index.html')
+    return render_template('index/index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -52,7 +52,7 @@ def register():
         login_user(user)
         return redirect(url_for('feed'))
     
-    return render_template('register.html', form=form)
+    return render_template('register/index.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,7 +80,7 @@ def login():
         else:
             flash('Nombre de usuario/email o contraseña incorrectos.', 'error')
     
-    return render_template('login.html', form=form)
+    return render_template('login/index.html', form=form)
 
 @app.route('/logout')
 @login_required
@@ -108,7 +108,7 @@ def feed():
     
     post_form = PostForm()
     
-    return render_template('feed.html', 
+    return render_template('feed/index.html',
                          posts=posts, 
                          notes=notes, 
                          post_form=post_form,
@@ -172,7 +172,7 @@ def upload_note():
         else:
             flash('Error al subir el archivo. Inténtalo de nuevo.', 'error')
     
-    return render_template('upload_note.html', form=form)
+    return render_template('upload_note/index.html', form=form)
 
 @app.route('/note/<int:id>')
 def note_detail(id):
@@ -187,7 +187,7 @@ def note_detail(id):
     
     comment_form = CommentForm()
     
-    return render_template('note_detail.html', 
+    return render_template('note_detail/index.html',
                          note=note, 
                          comments=comments, 
                          comment_form=comment_form,
@@ -274,7 +274,7 @@ def profile(username):
     # Get user's achievements
     achievements = UserAchievement.query.filter_by(user_id=user.id).all()
     
-    return render_template('profile.html', 
+    return render_template('profile/index.html',
                          user=user, 
                          notes=notes, 
                          posts=posts, 
@@ -323,7 +323,7 @@ def forum():
         page=page, per_page=15, error_out=False
     )
     
-    return render_template('forum.html', posts=posts, filter_type=filter_type, format_time_ago=format_time_ago)
+    return render_template('forum/index.html', posts=posts, filter_type=filter_type, format_time_ago=format_time_ago)
 
 @app.route('/missions')
 @login_required
@@ -351,7 +351,7 @@ def missions():
     
     db.session.commit()
     
-    return render_template('missions.html', 
+    return render_template('missions/index.html',
                          missions=active_missions, 
                          user_missions=user_missions)
 
@@ -364,7 +364,7 @@ def marketplace():
         page=page, per_page=12, error_out=False
     )
     
-    return render_template('marketplace.html', items=items, format_time_ago=format_time_ago)
+    return render_template('marketplace/index.html', items=items, format_time_ago=format_time_ago)
 
 @app.route('/sell_item', methods=['GET', 'POST'])
 @login_required
@@ -412,7 +412,7 @@ def messages():
                 'full_name': f"{first_name} {last_name}"
             }
     
-    return render_template('messages.html', conversations=conversations)
+    return render_template('messages/index.html', conversations=conversations)
 
 @app.route('/chat/<username>')
 @login_required
@@ -504,12 +504,12 @@ def utility_processor():
 # Error handlers
 @app.errorhandler(404)
 def not_found_error(error):
-    return render_template('404.html'), 404
+    return render_template('404/index.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
-    return render_template('500.html'), 500
+    return render_template('500/index.html'), 500
 
 # AI Chatbot Routes
 @app.route('/crunebot')
@@ -517,7 +517,7 @@ def internal_error(error):
 def crunebot():
     """AI chatbot page"""
     conversations = ChatConversation.query.filter_by(user_id=current_user.id).order_by(ChatConversation.updated_at.desc()).all()
-    return render_template('crunebot.html', conversations=conversations)
+    return render_template('crunebot/index.html', conversations=conversations)
 
 @app.route('/crunebot/new', methods=['POST'])
 @login_required
@@ -648,7 +648,7 @@ def notifications():
         notification.is_read = True
     db.session.commit()
     
-    return render_template('notifications.html', notifications=notifications)
+    return render_template('notifications/index.html', notifications=notifications)
 
 @app.route('/notifications/unread-count')
 @login_required
@@ -681,7 +681,7 @@ def rankings():
         .order_by(User.total_points.desc())\
         .limit(50).all()
     
-    return render_template('rankings.html', 
+    return render_template('rankings/index.html',
                          weekly_rankings=weekly_rankings,
                          monthly_rankings=monthly_rankings,
                          top_users=top_users)
@@ -706,7 +706,7 @@ def referrals():
     # Get referred users
     referred_users = User.query.filter_by(referred_by_id=current_user.id).all()
     
-    return render_template('referrals.html', 
+    return render_template('referrals/index.html',
                          referral=user_referral,
                          referred_users=referred_users)
 
@@ -727,7 +727,7 @@ def courses():
     courses = query.order_by(Course.created_at.desc()).all()
     categories = db.session.query(Course.category).distinct().all()
     
-    return render_template('courses.html', 
+    return render_template('courses/index.html',
                          courses=courses,
                          categories=[cat[0] for cat in categories],
                          selected_category=category,
@@ -747,7 +747,7 @@ def course_detail(course_id):
             course_id=course_id
         ).first()
     
-    return render_template('course_detail.html', 
+    return render_template('course_detail/index.html',
                          course=course,
                          videos=videos,
                          enrollment=enrollment)
