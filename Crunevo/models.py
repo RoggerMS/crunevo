@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     total_points = db.Column(db.Integer, default=0)
     level = db.Column(db.Integer, default=1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    active = db.Column(db.Boolean, default=True)
+    is_active = db.Column(db.Boolean, default=True)
     
     # Referral system
     referred_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
